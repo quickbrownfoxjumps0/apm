@@ -1,0 +1,34 @@
+# Ignore build artifacts
+/build/
+/build/*
+
+# Ignore executable files
+*.exe
+*.exe.stackdump
+
+# Ignore object files
+*.o
+*.obj
+
+# Ignore dependency files
+*.d
+
+# Ignore Ninja build files
+.ninja_deps
+.ninja_log
+.ninja_log*
+
+# Ignore Visual Studio files (if any)
+*.vcxproj*
+*.sln
+*.user
+
+# Ignore MSYS2 logs and temporary files
+*.log
+*.tmp
+
+# Ignore editor backup files
+*~
+*.swp
+*.bak
+
