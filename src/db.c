@@ -1,6 +1,5 @@
 #include "pbkdf2.h"
-#define SQLITE_HAS_CODEC 1
-#include <sqlcipher/sqlite3.h>
+#include "db.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
