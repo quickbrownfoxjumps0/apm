@@ -7,9 +7,15 @@ CC = gcc
 TARGET = apm.exe
 
 # Compiler flags
-CFLAGS = -Wall -O2 -static -lsqlcipher
+CFLAGS = -Wall -O2 -static 
+# -I/mingw64/include
+
+# Linker flags
+# LDFLAGS = -L/mingw64/lib
+
 # Libraries
-# LIBS = -mwindows -municode -lssl -lcrypto -lsqlcipher
+LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32
+# LIBS = -mwindows -municode -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32
 
 # Source files
 SRCS = $(wildcard src/*.c)
