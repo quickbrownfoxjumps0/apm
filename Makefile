@@ -7,10 +7,9 @@ CC = gcc
 TARGET = apm.exe
 
 # Compiler flags
-CFLAGS = -Wall -O2 -static -mwindows -municode
-
+CFLAGS = -Wall -O2 -static -lsqlcipher
 # Libraries
-# LIBS = -lssl -lcrypto -lsqlcipher
+# LIBS = -mwindows -municode -lssl -lcrypto -lsqlcipher
 
 # Source files
 SRCS = $(wildcard src/*.c)
@@ -38,3 +37,30 @@ $(BUILD_DIR)/$(TARGET): $(OBJS)
 clean:
 	rm -rf $(BUILD_DIR)
 
+# Tests  
+# SHA256
+test-sha256: build/test-sha256
+
+build/test-sha256: src/sha256.c tests/test-sha256.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+run-sha256-test: test-sha256
+	./build/test-sha256
+
+# HMAC
+test-hmac: build/test-hmac
+
+build/test-hmac: src/sha256.c src/hmac.c tests/test-hmac.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+run-hmac-test: test-hmac
+	./build/test-hmac
+
+#  PBKDF2
+test-pbkdf2: build/test-pbkdf2
+
+build/test-pbkdf2: src/sha256.c src/hmac.c src/pbkdf2.c tests/test-pbkdf2.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+run-pbkdf2-test: test-pbkdf2
+	./build/test-pbkdf2
