@@ -63,6 +63,14 @@ int open_encrypted_db(const char *filename,
 	uint8_t key[DERIVED_KEY_LEN];
 	pbkdf2_hmac_sha256((const uint8_t *)password, strlen(password),
 			salt, SALT_SIZE, PBKDF2_ITERATIONS, key, DERIVED_KEY_LEN);
+	
+	// Print derived key in hex
+	/*
+	printf("Derived key: ");
+	for (int i = 0; i < DERIVED_KEY_LEN; ++i)
+		printf("%02x", key[i]);
+	printf("\n");
+	*/
 
 	sqlite3 *db = NULL;
 	int rc = sqlite3_open(filename, &db);

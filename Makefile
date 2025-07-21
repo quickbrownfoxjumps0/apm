@@ -7,43 +7,42 @@ CC = gcc
 TARGET = apm.exe
 
 # Compiler flags
-CFLAGS = -Wall -O2 -static 
-# -I/mingw64/include
+CFLAGS = -Wall -O2 -static
 
-# Linker flags
-# LDFLAGS = -L/mingw64/lib
+# Libraries to link
+LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32 -lcomctl32 -mwindows 
 
-# Libraries
-LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32
-# LIBS = -mwindows -municode -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32
-
-# Source files
-SRCS = $(wildcard src/*.c)
-
-# Object files
-OBJS = $(patsubst src/%, $(BUILD_DIR)/%, $(SRCS:.c=.o))
-
-# Build output dir
+# Directories
+SRC_DIR = src
 BUILD_DIR = build
 
-# How to compile object files
-$(BUILD_DIR)/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Source files
+SRCS = $(wildcard $(SRC_DIR)/*.c)
 
-# Default rule
+# Object files go to build/
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
+
+# Default target
 all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET)
 
+# Create build directory if it doesn't exist
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
+# Compile each .c to .o inside build/
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Link object files to create final executable
 $(BUILD_DIR)/$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-# Clean
+# Clean build directory
 clean:
 	rm -rf $(BUILD_DIR)
 
-# Tests  
+# === Tests ===
+
 # SHA256
 test-sha256: build/test-sha256
 
@@ -62,7 +61,7 @@ build/test-hmac: src/sha256.c src/hmac.c tests/test-hmac.c
 run-hmac-test: test-hmac
 	./build/test-hmac
 
-#  PBKDF2
+# PBKDF2
 test-pbkdf2: build/test-pbkdf2
 
 build/test-pbkdf2: src/sha256.c src/hmac.c src/pbkdf2.c tests/test-pbkdf2.c
@@ -70,3 +69,4 @@ build/test-pbkdf2: src/sha256.c src/hmac.c src/pbkdf2.c tests/test-pbkdf2.c
 
 run-pbkdf2-test: test-pbkdf2
 	./build/test-pbkdf2
+
