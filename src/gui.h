@@ -3,4 +3,5 @@
 
 void run_gui(void);
 
-#endif				// GUI_H
+#endif				
+

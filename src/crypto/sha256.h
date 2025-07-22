@@ -20,3 +20,4 @@ void sha256_final(SHA256Context * ctx, uint8_t * hash);
 
 
 #endif
+

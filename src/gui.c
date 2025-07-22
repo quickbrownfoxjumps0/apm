@@ -5,19 +5,20 @@
 #include "entry-list.h"
 #include "utils.h"
 #include "resource.h"
+#include "generator/generator.h"
 #include <windows.h>
-#include <io.h>			// for _access()
-#include <commdlg.h>		// for GetOpenFileName
+#include <io.h>			
+#include <commdlg.h>		
 #include <commctrl.h>
 #include <string.h>
 #include <stdio.h>
 
 
-/* Forward declarations */
+
 LRESULT CALLBACK PasswordEditSubclassProc(HWND hwnd, UINT msg, WPARAM wParam,
 					  LPARAM lParam);
 
-/* Global */
+
 typedef enum {
 	SCREEN_LOGIN,
 	SCREEN_MANAGER
@@ -26,35 +27,31 @@ typedef enum {
 static ScreenState current_screen = -1;
 static char db_path[MAX_PATH_LEN] = { 0 };
 
-static char *clipboard_backup = NULL;	// To compare before clearing
+static char *clipboard_backup = NULL;	
 static WNDPROC OriginalEditProc = NULL;
 
-// Login screen menu and controls
+
 static HMENU hMenuLogin = NULL;
-static HWND hwndLabelDbFile = NULL;	// to show selected DB file on login screen
+static HWND hwndLabelDbFile = NULL;	
 static HWND hwndPassword = NULL;
 static HWND hwndLoginButton = NULL;
 
-// Manager screen menu and controls
-static HMENU hMenuManager = NULL;	// future use
+
+static HMENU hMenuManager = NULL;	
 static HWND hwndListView = NULL;
 static HWND hwndAddButton = NULL;
 static HWND hwndEditButton = NULL;
 static HWND hwndDeleteButton = NULL;
 
-/*
- * ================================
- * SCREENS
- * ================================
- */
 
-/* Login screen */
 
-// Create login screen menu
+
+
+
 void create_login_menu(HWND hwnd)
 {
 	if (hMenuLogin)
-		return;		// already created
+		return;		
 
 	hMenuLogin = CreateMenu();
 	HMENU hFileMenu = CreatePopupMenu();
@@ -99,17 +96,17 @@ void update_login_button_text()
 	SetWindowTextA(hwndLoginButton, btnText);
 }
 
-// Function to create login screen controls:
+
 void create_login_screen(HWND hwnd)
 {
-// Create DB filename label
+
 	hwndLabelDbFile = CreateWindowExA(0, "STATIC", "",
 					  WS_CHILD | WS_VISIBLE | SS_CENTER,
 					  0, 0, 100, 20,
 					  hwnd, NULL, GetModuleHandle(NULL),
 					  NULL);
 
-	// Create password edit box
+	
 	hwndPassword = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "",
 				       WS_CHILD | WS_VISIBLE | WS_BORDER |
 				       ES_PASSWORD | ES_AUTOHSCROLL, 0, 0, 100,
@@ -121,7 +118,7 @@ void create_login_screen(HWND hwnd)
 					   (LONG_PTR)
 					   PasswordEditSubclassProc);
 
-	// Create login/register button
+	
 	hwndLoginButton = CreateWindowExA(0, "BUTTON", "Register",
 					  WS_CHILD | WS_VISIBLE |
 					  BS_PUSHBUTTON, 0, 0, 100, 30, hwnd,
@@ -132,7 +129,7 @@ void create_login_screen(HWND hwnd)
 	update_db_label_text();
 }
 
-// Function to destroy login screen controls:
+
 void destroy_login_screen(void)
 {
 	if (hwndLabelDbFile) {
@@ -152,7 +149,7 @@ void destroy_login_screen(void)
 	}
 }
 
-// Layout function: position controls in login screen
+
 void layout_login_screen(HWND hwnd, int width, int height)
 {
 	if (!hwndPassword || !hwndLoginButton || !hwndLabelDbFile)
@@ -160,35 +157,35 @@ void layout_login_screen(HWND hwnd, int width, int height)
 
 	const int spacing = 10;
 
-	// Get control sizes (we can fix height or query)
-	// RECT rcLabel, rcPassword, rcButton;
+	
+	
 
-	// For simplicity assume fixed heights or get from controls
+	
 	int label_height = 20;
 	int edit_height = 25;
 	int button_height = 30;
 
-	// Calculate total height (3 controls + 2 spacings)
+	
 	int total_height =
 		label_height + spacing + edit_height + spacing + button_height;
 
-	// Calculate top offset for vertical centering
+	
 	int top = (height - total_height) / 2;
 
-	// Center horizontally: width of controls - let label and password box stretch full width minus margins, button fixed width
+	
 	const int margin = 50;
 	int ctrl_width = width - 2 * margin;
 	int button_width = 100;
 
-	// Position Label (db filename)
+	
 	MoveWindow(hwndLabelDbFile, margin, top, ctrl_width, label_height,
 		   TRUE);
 
-	// Position Password edit box below label
+	
 	MoveWindow(hwndPassword, margin, top + label_height + spacing,
 		   ctrl_width, edit_height, TRUE);
 
-	// Position Login/Register button below password box, centered horizontally
+	
 	int button_x = (width - button_width) / 2;
 	MoveWindow(hwndLoginButton, button_x,
 		   top + label_height + spacing + edit_height + spacing,
@@ -200,7 +197,7 @@ void layout_login_screen(HWND hwnd, int width, int height)
 
 
 
-/* Manager screen */
+
 
 void create_manager_menu(HWND hwnd)
 {
@@ -210,7 +207,6 @@ void create_manager_menu(HWND hwnd)
 	hMenuManager = CreateMenu();
 	HMENU hFileMenu = CreatePopupMenu();
 
-	AppendMenuA(hFileMenu, MF_STRING, ID_FILE_LOGOUT, "Logout");
 	AppendMenuA(hFileMenu, MF_SEPARATOR, 0, NULL);
 	AppendMenuA(hFileMenu, MF_STRING, ID_FILE_EXIT, "Exit");
 
@@ -256,7 +252,7 @@ void create_manager_screen(HWND hwnd)
 				0, 0, 80, 25, hwnd, (HMENU) ID_BUTTON_DELETE,
 				GetModuleHandle(NULL), NULL);
 
-	// Setup ListView columns
+	
 	LVCOLUMN col = { 0 };
 	col.mask = LVCF_TEXT | LVCF_WIDTH;
 
@@ -331,7 +327,7 @@ void set_screen(ScreenState new_screen, HWND hwnd)
 	if (current_screen == new_screen)
 		return;
 
-	// Cleanup old screen and menu
+	
 	if (current_screen == SCREEN_LOGIN) {
 		destroy_login_screen();
 		destroy_login_menu(hwnd);
@@ -342,7 +338,7 @@ void set_screen(ScreenState new_screen, HWND hwnd)
 
 	current_screen = new_screen;
 
-	// Create new screen and layout
+	
 	if (new_screen == SCREEN_LOGIN) {
 		create_login_menu(hwnd);
 		create_login_screen(hwnd);
@@ -362,11 +358,7 @@ void set_screen(ScreenState new_screen, HWND hwnd)
 
 
 
-/*
- * ================================
- * EVENTS
- * ================================
- */
+
 static void open_file_dialog(HWND hwnd)
 {
 	OPENFILENAME ofn;
@@ -383,7 +375,7 @@ static void open_file_dialog(HWND hwnd)
 	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
 	if (GetOpenFileName(&ofn) == TRUE) {
-		// Copy selection to db_path
+		
 		strncpy(db_path, ofn.lpstrFile, MAX_PATH_LEN - 1);
 		db_path[MAX_PATH_LEN - 1] = '\0';
 		update_db_label_text();
@@ -412,7 +404,7 @@ void handle_login_or_register(HWND hwnd)
 	}
 
 	if (db_path[0] == '\0') {
-		// Register mode — create vault.db if it doesn't exist
+		
 		const char *vault_name = "vault.db";
 		const char *salt_name = "vault.db.salt";
 
@@ -426,7 +418,7 @@ void handle_login_or_register(HWND hwnd)
 		}
 		if (open_encrypted_db(vault_name, password, &db) == SQLITE_OK) {
 			db_init_schema(db);
-			// MessageBox(hwnd, "Database created successfully.", "Registered", MB_OK | MB_ICONINFORMATION);
+			
 			SecureZeroMemory(password, sizeof(password));
 			set_screen(SCREEN_MANAGER, hwnd);
 
@@ -435,9 +427,9 @@ void handle_login_or_register(HWND hwnd)
 				   MB_OK | MB_ICONERROR);
 		}
 	} else {
-		// Login mode — open existing DB
+		
 		if (open_encrypted_db(db_path, password, &db) == SQLITE_OK) {
-			// MessageBox(hwnd, "Login successful.", "Success", MB_OK | MB_ICONINFORMATION);
+			
 			SecureZeroMemory(password, sizeof(password));
 			set_screen(SCREEN_MANAGER, hwnd);
 		} else {
@@ -456,11 +448,7 @@ void handle_login_or_register(HWND hwnd)
 
 
 
-/*
- * ================================
- * CALLBACKS/WINPROC
- * ================================
- */
+
 
 
 LRESULT CALLBACK PasswordEditSubclassProc(HWND hwnd, UINT msg, WPARAM wParam,
@@ -519,8 +507,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 			break;
 		case ID_GENERATE:
-			MessageBox(hwnd, "Generate password clicked (TODO)",
-				   "Generate", MB_OK);
+			show_generator_window(hwnd);
 			break;
 		case ID_LOGIN_BUTTON:
 			handle_login_or_register(hwnd);
@@ -532,7 +519,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			HWND hwndList = GetDlgItem(hwnd, ID_ENTRY_LIST);
 			int selectedIndex = -1;
 
-			// Get selected item index
+			
 			for (int i = 0; i < ListView_GetItemCount(hwndList);
 			     i++) {
 				if (ListView_GetItemState
@@ -592,7 +579,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 
-				populate_entry_list(hwndList);	// Refresh the virtual list
+				populate_entry_list(hwndList);	
 				break;
 			}
 		}
@@ -611,7 +598,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					entry_cache->entries[di->item.iItem];
 
 				if (di->item.mask & LVIF_TEXT) {
-					static char buffer[256];	// temporary buffer
+					static char buffer[256];	
 
 					switch (di->item.iSubItem) {
 					case 0:
@@ -680,13 +667,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						}
 						CloseClipboard();
 
-						free_password(password);	// implement this
+						free_password(password);	
 
-						// Show toast (non-blocking)
+						
 						show_toast(hwnd,
 							   "Password copied to clipboard");
 
-						// Start timer
+						
 						SetTimer(hwnd,
 							 CLIPBOARD_CLEAR_TIMER_ID,
 							 CLIPBOARD_CLEAR_TIMEOUT_MS,
@@ -715,7 +702,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (clipText && clipboard_backup
 					    && strcmp(clipText,
 						      clipboard_backup) == 0) {
-						EmptyClipboard();	// Clear it
+						EmptyClipboard();	
 						show_toast(hwnd,
 							   "Clipboard auto-cleared");
 					}
@@ -726,7 +713,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			KillTimer(hwnd, CLIPBOARD_CLEAR_TIMER_ID);
 			if (clipboard_backup) {
-				// Zero out the clipboard backup before freeing
+				
 				SecureZeroMemory(clipboard_backup,
 						 strlen(clipboard_backup));
 				free(clipboard_backup);
@@ -780,3 +767,4 @@ void run_gui(void)
 		DispatchMessageA(&msg);
 	}
 }
+

@@ -6,7 +6,7 @@
 #include <windows.h>
 #include <string.h>
 
-// Implement ShowEntryDialog to create the dialog window
+
 void ShowEntryDialog(HWND hwndParent, EntryData * data)
 {
 	static const char className[] = "EntryDialogClass";
@@ -99,7 +99,7 @@ LRESULT CALLBACK EntryDialogProc(HWND hwnd, UINT msg, WPARAM wParam,
 				     x + 120, y, 100, 25, hwnd,
 				     (HMENU) ID_BUTTON_CANCEL, NULL, NULL);
 
-			// Now populate fields
+			
 			SetWindowText(hEditService, pData->service);
 			SetWindowText(hEditUsername, pData->username);
 			SetWindowText(hEditNotes, pData->notes);
@@ -116,9 +116,9 @@ LRESULT CALLBACK EntryDialogProc(HWND hwnd, UINT msg, WPARAM wParam,
 					      sizeof(pData->username));
 				GetWindowText(hEditPassword, pData->password,
 					      sizeof(pData->password));
-				SetWindowText(hEditPassword, "");	// Clears UI content
+				SetWindowText(hEditPassword, "");	
 				SendMessage(hEditPassword, EM_SETSEL, 0, -1);
-				SendMessage(hEditPassword, EM_REPLACESEL, TRUE, (LPARAM) "");	// Further overwrite attempt
+				SendMessage(hEditPassword, EM_REPLACESEL, TRUE, (LPARAM) "");	
 
 				GetWindowText(hEditNotes, pData->notes,
 					      sizeof(pData->notes));
@@ -211,3 +211,4 @@ LRESULT CALLBACK EntryDialogProc(HWND hwnd, UINT msg, WPARAM wParam,
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 
 }
+

@@ -1,4 +1,4 @@
-#include "pbkdf2.h"
+#include "crypto/pbkdf2.h"
 #include "db.h"
 #include <windows.h>
 #include <stdint.h>
@@ -27,7 +27,7 @@ static int load_or_create_salt(const char *salt_filename, uint8_t * salt_out,
 		fclose(fp);
 		return (read == salt_len) ? 0 : -1;
 	}
-	// Generate salt
+	
 	HCRYPTPROV hProv = 0;
 	if (!CryptAcquireContext
 	    (&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
@@ -39,7 +39,7 @@ static int load_or_create_salt(const char *salt_filename, uint8_t * salt_out,
 	}
 	CryptReleaseContext(hProv, 0);
 
-	// Save to file
+	
 	fp = fopen(salt_filename, "wb");
 	if (!fp)
 		return -1;
@@ -72,13 +72,8 @@ int open_encrypted_db(const char *filename,
 			   salt, SALT_SIZE, PBKDF2_ITERATIONS, key,
 			   DERIVED_KEY_LEN);
 
-	// Print derived key in hex
-	/*
-	   printf("Derived key: ");
-	   for (int i = 0; i < DERIVED_KEY_LEN; ++i)
-	   printf("%02x", key[i]);
-	   printf("\n");
-	 */
+	
+	
 
 	sqlite3 *db = NULL;
 	int rc = sqlite3_open(filename, &db);
@@ -88,7 +83,7 @@ int open_encrypted_db(const char *filename,
 		return rc;
 	}
 
-	/* Key for db */
+	
 	rc = sqlite3_key(db, key, DERIVED_KEY_LEN);
 
 	SecureZeroMemory(key, DERIVED_KEY_LEN);
@@ -99,7 +94,7 @@ int open_encrypted_db(const char *filename,
 		return rc;
 	}
 
-	/* Test query */
+	
 	sqlite3_stmt *stmt;
 	rc = sqlite3_prepare_v2(db, "SELECT count(*) FROM sqlite_master;", -1,
 				&stmt, NULL);
@@ -243,11 +238,11 @@ EntryList *db_get_all_entries(sqlite3 * db)
 	while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
 		if (list->count == capacity) {
 			capacity *= 2;
-			Entry **new_entries =
-				realloc(list->entries,
-					capacity * sizeof(Entry *));
+			Entry **new_entries = realloc(list->entries,
+						      capacity *
+						      sizeof(Entry *));
 			if (!new_entries) {
-				// cleanup and exit on failure
+				
 				free_entry_list(list);
 				sqlite3_finalize(stmt);
 				return NULL;
@@ -304,13 +299,13 @@ char *db_get_password_by_id(sqlite3 * db, int id)
 	}
 
 	sqlite3_finalize(stmt);
-	return password;	// Caller must free()
+	return password;	
 }
 
 void free_password(char *password)
 {
 	if (password) {
-		SecureZeroMemory(password, strlen(password));	// Windows-specific
+		SecureZeroMemory(password, strlen(password));	
 		free(password);
 	}
 }
@@ -362,3 +357,4 @@ void db_close(sqlite3 * db)
 		sqlite3_close(db);
 	}
 }
+

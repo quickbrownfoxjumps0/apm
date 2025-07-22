@@ -23,3 +23,4 @@ const char *get_filename_from_path(const char *path)
 		return slash + 1;
 	return path;
 }
+

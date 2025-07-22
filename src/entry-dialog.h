@@ -17,4 +17,5 @@ void ShowEntryDialog(HWND hwndParent, EntryData * data);
 LRESULT CALLBACK EntryDialogProc(HWND hwnd, UINT msg, WPARAM wParam,
 				 LPARAM lParam);
 
-#endif				// ENTRY_DIALOG_H
+#endif				
+

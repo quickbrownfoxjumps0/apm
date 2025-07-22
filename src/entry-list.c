@@ -50,3 +50,4 @@ void populate_entry_list(HWND hwndList)
 		ListView_SetItemCount(hwndList, 0);
 	}
 }
+

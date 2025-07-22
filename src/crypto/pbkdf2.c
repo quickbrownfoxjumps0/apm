@@ -19,11 +19,11 @@ void pbkdf2_hmac_sha256(const uint8_t * password, size_t password_len,
 		 1) / HMAC_SHA256_DIGEST_SIZE;
 	uint8_t u[HMAC_SHA256_DIGEST_SIZE];
 	uint8_t t[HMAC_SHA256_DIGEST_SIZE];
-	uint8_t salt_block[128];	// max salt + 4-byte block index
+	uint8_t salt_block[128];	
 	uint8_t block_index[4];
 
 	for (uint32_t i = 1; i <= block_count; i++) {
-		// Construct salt || INT(i)
+		
 		memcpy(salt_block, salt, salt_len);
 		int_to_big_endian(i, block_index);
 		memcpy(salt_block + salt_len, block_index, 4);
@@ -48,3 +48,4 @@ void pbkdf2_hmac_sha256(const uint8_t * password, size_t password_len,
 		       remaining);
 	}
 }
+

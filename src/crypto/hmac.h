@@ -12,3 +12,4 @@ void hmac_sha256(const uint8_t * key, size_t key_len,
 		 uint8_t * mac_out);
 
 #endif
+

@@ -103,7 +103,7 @@ void sha256_final(SHA256Context * ctx, uint8_t * hash)
 {
 	uint32_t i = ctx->datalen;
 
-	// Pad
+	
 	if (ctx->datalen < 56) {
 		ctx->data[i++] = 0x80;
 		while (i < 56)
@@ -116,7 +116,7 @@ void sha256_final(SHA256Context * ctx, uint8_t * hash)
 		memset(ctx->data, 0, 56);
 	}
 
-	// Append total message length in bits
+	
 	ctx->bitlen += ctx->datalen * 8;
 	ctx->data[63] = ctx->bitlen;
 	ctx->data[62] = ctx->bitlen >> 8;
@@ -129,10 +129,11 @@ void sha256_final(SHA256Context * ctx, uint8_t * hash)
 
 	sha256_transform(ctx, ctx->data);
 
-	// Convert hash state to output bytes
+	
 	for (i = 0; i < 4; ++i) {
 		for (int j = 0; j < 8; ++j)
 			hash[i + j * 4] =
 				(ctx->state[j] >> (24 - i * 8)) & 0xff;
 	}
 }
+

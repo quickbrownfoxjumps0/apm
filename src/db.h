@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define DERIVED_KEY_LEN 32	/* 256 bit key */
-#define PBKDF2_ITERATIONS 300000	/* number of iterations */
+#define DERIVED_KEY_LEN 32	
+#define PBKDF2_ITERATIONS 300000	
 
 #define SALT_EXT ".salt"
 #define SALT_SIZE 16
@@ -24,7 +24,7 @@ typedef struct {
 	size_t count;
 } EntryList;
 
-extern sqlite3 *db;		// Global DB handle
+extern sqlite3 *db;		
 
 void free_password(char *password);
 void free_entry(Entry * entry);
@@ -54,3 +54,4 @@ char *db_get_password_by_id(sqlite3 * db, int id);
 void db_close(sqlite3 * db);
 
 #endif
+

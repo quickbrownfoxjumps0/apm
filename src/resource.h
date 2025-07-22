@@ -4,10 +4,9 @@
 #define WINDOW_CLASS_NAME "APMWindowClass"
 #define MAX_PATH_LEN 512
 
-/* Controls */
+
 #define ID_FILE_OPEN  101
 #define ID_FILE_RESET 102
-#define ID_FILE_LOGOUT 104
 #define ID_FILE_EXIT 105
 #define ID_GENERATE 111
 
@@ -28,6 +27,7 @@
 #define ID_BUTTON_CANCEL 2002
 
 #define CLIPBOARD_CLEAR_TIMER_ID 9001
-#define CLIPBOARD_CLEAR_TIMEOUT_MS 30000	// 30 seconds
+#define CLIPBOARD_CLEAR_TIMEOUT_MS 30000	
 
-#endif				// RESOURCE_H
+#endif				
+

@@ -10,4 +10,5 @@ void on_add_entry(HWND hwndParent);
 void on_edit_entry(HWND hwndParent, int selectedIndex);
 void populate_entry_list(HWND hwndList);
 
-#endif				// ENTRY_LIST_H
+#endif				
+
