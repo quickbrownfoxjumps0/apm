@@ -18,6 +18,7 @@ It provides password generation with calculated entropy, including both random a
 - Unit tests for critical components.
 
 ## Project Structure
+```bash
 .
 ├── build # Build output files
 ├── src # Source code
@@ -27,6 +28,7 @@ It provides password generation with calculated entropy, including both random a
 ├── tests # Unit tests
 ├── tools # Resources and helper scripts
 └── Makefile # Build script
+```
 
 
 ## Dependencies and Installation
