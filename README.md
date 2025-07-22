@@ -40,6 +40,7 @@ It provides password generation with calculated entropy, including both random a
 
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-sqlcipher mingw-w64-x86_64-openssl
+```
 
 ## Build
 
