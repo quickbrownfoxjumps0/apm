@@ -11,7 +11,7 @@ CFLAGS = -Wall -O2 -static
 
 # Libraries to link
 # LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32 -lcomctl32 -mwindows 
-LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32 -lcomctl32 -lbcrypt -ladvapi32 -mwindows
+LIBS = -lsqlcipher -lcrypto -lssl -lcrypt32 -lws2_32 -lcomctl32 -lbcrypt -mwindows
 
 # Directories
 SRC_DIR = src
