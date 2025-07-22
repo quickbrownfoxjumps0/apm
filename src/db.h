@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define DERIVED_KEY_LEN 32 /* 256 bit key */
-#define PBKDF2_ITERATIONS 300000 /* number of iterations */
+#define DERIVED_KEY_LEN 32	/* 256 bit key */
+#define PBKDF2_ITERATIONS 300000	/* number of iterations */
 
 #define SALT_EXT ".salt"
 #define SALT_SIZE 16
@@ -16,7 +16,6 @@ typedef struct {
 	int id;
 	char *service;
 	char *username;
-	char *password;
 	char *notes;
 } Entry;
 
@@ -25,32 +24,33 @@ typedef struct {
 	size_t count;
 } EntryList;
 
-void free_entry(Entry *entry);
-void free_entry_list(EntryList *list);
+extern sqlite3 *db;		// Global DB handle
+
+void free_password(char *password);
+void free_entry(Entry * entry);
+void free_entry_list(EntryList * list);
 
 int open_encrypted_db(const char *filename,
-                      const char *password,
-                      sqlite3 **out_db);
+		      const char *password, sqlite3 ** out_db);
 
-int db_init_schema(sqlite3 *db);
+int db_init_schema(sqlite3 * db);
 
-int db_add_entry(sqlite3 *db,
-                 const char *service,
-                 const char *username,
-                 const char *password,
-                 const char *notes);
+int db_add_entry(sqlite3 * db,
+		 const char *service,
+		 const char *username,
+		 const char *password, const char *notes);
 
-int db_update_entry(sqlite3 *db,
-                    int id,
-                    const char *service,
-                    const char *username,
-                    char *password,
-                    const char *notes);
+int db_update_entry(sqlite3 * db,
+		    int id,
+		    const char *service,
+		    const char *username, char *password, const char *notes);
 
-int db_delete_entry(sqlite3 *db, int id);
+int db_delete_entry(sqlite3 * db, int id);
 
-EntryList* db_get_all_entries(sqlite3 *db);
+EntryList *db_get_all_entries(sqlite3 * db);
 
-void db_close(sqlite3 *db);
+char *db_get_password_by_id(sqlite3 * db, int id);
+
+void db_close(sqlite3 * db);
 
 #endif

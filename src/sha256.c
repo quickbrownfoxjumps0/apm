@@ -28,7 +28,7 @@ static const uint32_t k[64] = {
 #define SIG0(x)       (ROTRIGHT(x,7) ^ ROTRIGHT(x,18) ^ ((x) >> 3))
 #define SIG1(x)       (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
 
-void sha256_transform(SHA256Context *ctx, const uint8_t data[])
+void sha256_transform(SHA256Context * ctx, const uint8_t data[])
 {
 	uint32_t a, b, c, d, e, f, g, h, t1, t2, m[64];
 	int i;
@@ -72,7 +72,7 @@ void sha256_transform(SHA256Context *ctx, const uint8_t data[])
 	ctx->state[7] += h;
 }
 
-void sha256_init(SHA256Context *ctx)
+void sha256_init(SHA256Context * ctx)
 {
 	ctx->datalen = 0;
 	ctx->bitlen = 0;
@@ -86,7 +86,7 @@ void sha256_init(SHA256Context *ctx)
 	ctx->state[7] = 0x5be0cd19;
 }
 
-void sha256_update(SHA256Context *ctx, const uint8_t *data, size_t len)
+void sha256_update(SHA256Context * ctx, const uint8_t * data, size_t len)
 {
 	for (size_t i = 0; i < len; ++i) {
 		ctx->data[ctx->datalen] = data[i];
@@ -99,7 +99,7 @@ void sha256_update(SHA256Context *ctx, const uint8_t *data, size_t len)
 	}
 }
 
-void sha256_final(SHA256Context *ctx, uint8_t *hash)
+void sha256_final(SHA256Context * ctx, uint8_t * hash)
 {
 	uint32_t i = ctx->datalen;
 

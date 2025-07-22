@@ -10,9 +10,9 @@ static void int_to_big_endian(uint32_t val, uint8_t out[4])
 	out[3] = val & 0xFF;
 }
 
-void pbkdf2_hmac_sha256(const uint8_t *password, size_t password_len,
-			const uint8_t *salt, size_t salt_len,
-			uint32_t iterations, uint8_t *output, size_t dk_len)
+void pbkdf2_hmac_sha256(const uint8_t * password, size_t password_len,
+			const uint8_t * salt, size_t salt_len,
+			uint32_t iterations, uint8_t * output, size_t dk_len)
 {
 	uint32_t block_count =
 		(dk_len + HMAC_SHA256_DIGEST_SIZE -

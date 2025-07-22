@@ -1,0 +1,33 @@
+#ifndef RESOURCE_H
+#define RESOURCE_H
+
+#define WINDOW_CLASS_NAME "APMWindowClass"
+#define MAX_PATH_LEN 512
+
+/* Controls */
+#define ID_FILE_OPEN  101
+#define ID_FILE_RESET 102
+#define ID_FILE_LOGOUT 104
+#define ID_FILE_EXIT 105
+#define ID_GENERATE 111
+
+#define ID_PASSWORD_EDIT 201
+#define ID_LOGIN_BUTTON 202
+
+#define ID_ENTRY_LIST 301
+#define ID_BUTTON_ADD 302
+#define ID_BUTTON_EDIT 303
+#define ID_BUTTON_DELETE 304
+
+
+#define ID_EDIT_SERVICE  1001
+#define ID_EDIT_USERNAME 1002
+#define ID_EDIT_PASSWORD 1003
+#define ID_EDIT_NOTES    1004
+#define ID_BUTTON_OK     2001
+#define ID_BUTTON_CANCEL 2002
+
+#define CLIPBOARD_CLEAR_TIMER_ID 9001
+#define CLIPBOARD_CLEAR_TIMEOUT_MS 30000	// 30 seconds
+
+#endif				// RESOURCE_H

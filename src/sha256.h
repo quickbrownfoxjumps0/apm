@@ -14,9 +14,9 @@ typedef struct {
 } SHA256Context;
 
 
-void sha256_init(SHA256Context *ctx);
-void sha256_update(SHA256Context *ctx, const uint8_t *data, size_t len);
-void sha256_final(SHA256Context *ctx, uint8_t *hash);
+void sha256_init(SHA256Context * ctx);
+void sha256_update(SHA256Context * ctx, const uint8_t * data, size_t len);
+void sha256_final(SHA256Context * ctx, uint8_t * hash);
 
 
 #endif
